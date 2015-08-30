@@ -1,5 +1,8 @@
 package com.coding.challenge.appdirect.oauth;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.log4j.Logger;
 import org.scribe.builder.api.DefaultApi10a;
 import org.scribe.model.OAuthConstants;
@@ -20,7 +23,7 @@ public class OAuthRequestValidator {
 		return instance;
 	}
  
-	public boolean validate(Verb verb, String url, String timestamp, String nonce, String signatureMethod,
+	public boolean validate(Verb verb, String url, Map<String, String[]> queryParameters, String timestamp, String nonce, String signatureMethod,
 							String version, String publicKey, String secretKey, String requestSignature) {
  
 		DefaultApi10a api = new Oauth10aAPI();
@@ -35,6 +38,15 @@ public class OAuthRequestValidator {
  
 		OAuthRequest request = new OAuthRequest(verb, url);
 		// add the necessary parameters
+		
+			for(Entry<String, String[]> entry : queryParameters.entrySet()) {
+				
+				for (String value : entry.getValue()) {
+					
+					request.addQuerystringParameter(entry.getKey(), value);
+				}
+			}
+			
 	        request.addOAuthParameter(OAuthConstants.TIMESTAMP, timestamp);
 	        request.addOAuthParameter(OAuthConstants.NONCE, nonce);
 	        request.addOAuthParameter(OAuthConstants.CONSUMER_KEY, publicKey);

@@ -14,7 +14,7 @@ public class Account {
 	private String email;
 	private String name;
 	private String phoneNumber;
-	private String Edition;
+	private String edition;
 	private String maxUsers;
 
 	public Account() {
@@ -61,11 +61,11 @@ public class Account {
 	}
 
 	public String getEdition() {
-		return Edition;
+		return edition;
 	}
 
 	public void setEdition(String edition) {
-		Edition = edition;
+		this.edition = edition;
 	}
 
 	public String getMaxUsers() {

@@ -7,6 +7,20 @@
 <body>
 
 	<div>
+	<table border="1">
+			<tr>
+				<th>uuid</th>
+				<th>Name</th>
+			</tr>
+			<c:forEach items="${accounts}" var="account">
+				<tr>
+					<td>${account.uuid}</td>
+					<td>${account.name}</td>
+				</tr>
+			</c:forEach>
+		</table>
+	
+	
 		<table border="1">
 			<tr>
 				<th>Account</th>
