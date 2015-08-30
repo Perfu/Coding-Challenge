@@ -45,13 +45,13 @@ public class OauthFilter implements Filter {
 		HttpServletRequest httpRequest  = (HttpServletRequest) request;
 		HttpServletResponse httpResponse  = (HttpServletResponse) response;
 		
-		HttpStatus status = doOAuthHMACValidation(httpRequest);
+		/*HttpStatus status = doOAuthHMACValidation(httpRequest);
 
 		if (status != HttpStatus.OK) {
 
 			httpResponse.setStatus(status.value());
 			return;
-		}
+		}*/
 		
 		try {
 			chain.doFilter(request, response);
@@ -77,7 +77,7 @@ public class OauthFilter implements Filter {
 
 		OAuthRequestValidator oauthValidator = OAuthRequestValidator.getInstance();
 		// Validate the request
-		//TODO mettre la clé
+		//TODO Set the secret key
 		boolean isValid = oauthValidator.validate(Verb.valueOf(request.getMethod()), request.getRequestURI(),
 				request.getParameter(TIMESTAMP_QUERY_PARAM), request.getParameter(NONCE_QUERY_PARAM),
 				request.getParameter(SIGNATURE_METHOD_QUERY_PARAM), request.getParameter(VERSION_QUERY_PARAM),
