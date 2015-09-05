@@ -1,10 +1,7 @@
 package com.coding.challenge.appdirect.filter;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Collections;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,22 +12,22 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.scribe.model.Verb;
+import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
 
+import com.coding.challenge.appdirect.oauth.HttpServletOauth;
 import com.coding.challenge.appdirect.oauth.Keys;
-import com.coding.challenge.appdirect.oauth.OAuthRequestValidator;
+
+import oauth.signpost.OAuth;
+import oauth.signpost.basic.DefaultOAuthConsumer;
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.http.HttpParameters;
 
 public class OauthFilter implements Filter {
 
-	static final String TIMESTAMP_QUERY_PARAM = "oauth_timestamp";
-	static final String NONCE_QUERY_PARAM = "oauth_nonce";
-	static final String SIGNATURE_METHOD_QUERY_PARAM = "oauth_signature_method";
-	static final String VERSION_QUERY_PARAM = "oauth_version";
-	static final String CONSUMER_KEY_QUERY_PARAM = "oauth_consumer_key";
-	static final String SIGNATURE_QUERY_PARAM = "oauth_signature";
+	private static final Logger LOG = Logger.getLogger(OauthFilter.class);
 
 	@Override
 	public void destroy() {
@@ -46,89 +43,75 @@ public class OauthFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
+		LOG.info("Validating the signature of the request(Oauth).");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpServletResponse httpResponse = (HttpServletResponse) response;
 
 		try {
-		HttpStatus status = doOAuthHMACValidation(httpRequest);
+			HttpStatus status = oauthValidation(httpRequest);
 
-		if (status != HttpStatus.OK) {
+			if (status != HttpStatus.OK) {
 
-			httpResponse.setStatus(status.value());
-			return;
-		}
-
+				LOG.warn("Signature not Valid");
+				httpResponse.setStatus(status.value());
+				return;
+			}
 
 			chain.doFilter(request, response);
 		} catch (Exception ex) {
-			request.setAttribute("errorMessage", ex);
-			request.getRequestDispatcher("/WEB-INF/views/jsp/error.jsp").forward(request, response);
+			LOG.error("Problem occured during validation of signature", ex);
+			httpResponse.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return;
 		}
 
 	}
 
-	private HttpStatus doOAuthHMACValidation(HttpServletRequest request) throws Exception {
+	private HttpStatus oauthValidation(HttpServletRequest request) {
 
-		// Check that all the needed parameters are contained in the request
-		Map<String, String[]> queryValues = request.getParameterMap();
-		if (!queryValues.containsKey(TIMESTAMP_QUERY_PARAM) || !queryValues.containsKey(NONCE_QUERY_PARAM)
-				|| !queryValues.containsKey(SIGNATURE_METHOD_QUERY_PARAM)
-				|| !queryValues.containsKey(VERSION_QUERY_PARAM) || !queryValues.containsKey(CONSUMER_KEY_QUERY_PARAM)
-				|| !queryValues.containsKey(SIGNATURE_QUERY_PARAM)) {
+		LOG.debug("------Request information-----");
+		for (String name : Collections.list(request.getHeaderNames())) {
 
-			return HttpStatus.BAD_REQUEST;
+			LOG.debug("HEADER : " + name + " = " + request.getHeader(name));
+		}
+		LOG.debug("URL : " + request.getRequestURL());
+		LOG.debug("Query String : " + request.getQueryString());
+		LOG.debug("------------------------------");
+
+		HttpServletOauth oauthRequest = new HttpServletOauth(request);
+
+		HttpParameters headerParams = OAuth.oauthHeaderToParamsMap(request.getHeader(OAuth.HTTP_AUTHORIZATION_HEADER));
+
+		String requestSignature = OAuth.percentDecode(headerParams.getFirst(OAuth.OAUTH_SIGNATURE));
+
+		if (requestSignature == null) {
+			requestSignature = request.getParameter(OAuth.OAUTH_SIGNATURE);
 		}
 
-		OAuthRequestValidator oauthValidator = OAuthRequestValidator.getInstance();
-		// Validate the request
-		boolean isValid = oauthValidator.validate(Verb.valueOf(request.getMethod()), request.getRequestURL().toString(),
-				extractQueryParametersExceptOauth(request), request.getParameter(TIMESTAMP_QUERY_PARAM),
-				request.getParameter(NONCE_QUERY_PARAM), request.getParameter(SIGNATURE_METHOD_QUERY_PARAM),
-				request.getParameter(VERSION_QUERY_PARAM), request.getParameter(CONSUMER_KEY_QUERY_PARAM), Keys.SECRET_KEY,
-				request.getParameter(SIGNATURE_QUERY_PARAM));
+		LOG.debug("Request signature : " + requestSignature);
 
-		if (!isValid) {
-			return HttpStatus.FORBIDDEN;
+		DefaultOAuthConsumer consumer = new DefaultOAuthConsumer(Keys.CONSUMER_KEY, Keys.SECRET_KEY);
+
+		try {
+			consumer.sign(oauthRequest);
+		} catch (OAuthMessageSignerException | OAuthExpectationFailedException | OAuthCommunicationException e) {
+
+			LOG.error(e);
+			return HttpStatus.UNAUTHORIZED;
 		}
 
-		return HttpStatus.OK;
-	}
+		String realSignature = OAuth
+				.percentDecode(OAuth.oauthHeaderToParamsMap(oauthRequest.getHeader(OAuth.HTTP_AUTHORIZATION_HEADER))
+						.getFirst(OAuth.OAUTH_SIGNATURE));
 
-	/**
-	 * Extract Parameters that are not include in Oauthparameters ton validate the signature correctly.
-	 * 
-	 * @param request
-	 * @return
-	 * @throws Exception
-	 */
-	private static Map<String, String[]> extractQueryParametersExceptOauth(HttpServletRequest request) throws Exception {
-		String[] oauthParameters = { TIMESTAMP_QUERY_PARAM, NONCE_QUERY_PARAM, SIGNATURE_METHOD_QUERY_PARAM,
-				VERSION_QUERY_PARAM, CONSUMER_KEY_QUERY_PARAM, SIGNATURE_QUERY_PARAM };
+		LOG.debug("Real signature : " + realSignature);
 
-		List<String> oauthParametersList = Arrays.asList(oauthParameters);
-		Map<String, String[]> queryParameters = new HashMap<String, String[]>();
-		String queryString = request.getQueryString();
+		if (realSignature.equals(requestSignature)) {
+			LOG.debug("Signature is valid.");
+			return HttpStatus.OK;
 
-		if (StringUtils.isEmpty(queryString)) {
-			return queryParameters;
+		} else {
+			return HttpStatus.UNAUTHORIZED;
 		}
 
-		String[] parameters = queryString.split("&");
-
-		for (String parameter : parameters) {
-			String[] keyValuePair = parameter.split("=");
-
-			if (oauthParametersList.contains(keyValuePair[0])) {
-				continue;
-			}
-			String[] values = queryParameters.get(keyValuePair[0]);
-			if (keyValuePair.length == 2) {
-
-				String valueDecoded = java.net.URLDecoder.decode(keyValuePair[1], "UTF-8");
-				values = ArrayUtils.add(values, valueDecoded);
-				queryParameters.put(keyValuePair[0], values);
-			}
-		}
-		return queryParameters;
 	}
 }

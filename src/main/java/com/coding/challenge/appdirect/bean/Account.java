@@ -1,7 +1,12 @@
 package com.coding.challenge.appdirect.bean;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -15,7 +20,11 @@ public class Account {
 	private String name;
 	private String phoneNumber;
 	private String edition;
-	private String maxUsers;
+	private String website;
+	private long maxUsers;
+	
+	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE, mappedBy="account")
+	private Set<User> users;
 
 	public Account() {
 	}
@@ -68,12 +77,29 @@ public class Account {
 		this.edition = edition;
 	}
 
-	public String getMaxUsers() {
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
+	}
+
+	public long getMaxUsers() {
 		return maxUsers;
 	}
 
-	public void setMaxUsers(String maxUsers) {
+	public void setMaxUsers(long maxUsers) {
 		this.maxUsers = maxUsers;
+	}
+
+	
+	public Set<User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 
 	@Override

@@ -4,6 +4,7 @@ public class Payload {
 
 	private Company company;
 	private Order order;
+	private Account account;
 
 	public Company getCompany() {
 		return company;
@@ -19,6 +20,14 @@ public class Payload {
 
 	public void setOrder(Order order) {
 		this.order = order;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
 	}
 
 }

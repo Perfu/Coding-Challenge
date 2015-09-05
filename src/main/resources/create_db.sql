@@ -1,8 +1,34 @@
-create table account(uuid varchar(255) PRIMARY KEY, country varchar(255),email varchar(255),name varchar(255),phoneNumber varchar(255),edition varchar(255) ,maxUsers varchar(255));
+CREATE TABLE account
+(
+  uuid uuid NOT NULL,
+  country text,
+  email text,
+  name text,
+  phone_number text,
+  edition text NOT NULL,
+  "maxUsers" integer NOT NULL,
+  website text,
+  CONSTRAINT account_pkey PRIMARY KEY (uuid)
+)
 
-create table user(id bigint auto_increment, account varchar(255),email varchar(255),firstName varchar(255),language varchar(255),lastName varchar(255) ,openId varchar(255) UNIQUE, uuid varchar(255));
-
-insert into user(account,email,firstName,language,lastName,openId, uuid) values('account1','coucou@coucou.com','test','fr','junit','openid','uuid');
-insert into user(account,email,firstName,language,lastName,openId, uuid) values('account1','coucou2@coucou.com','test2','fr','junit2','openid2','uuid2');
-insert into user(account,email,firstName,language,lastName,openId, uuid) values('account2','coucou@coucou.com','test','fr','junit','openid3','uuid');
-insert into user(account,email,firstName,language,lastName,openId, uuid) values('account3','coucou@coucou.com','test','fr','junit','openid4','uuid');
+CREATE SEQUENCE "USER_id_seq"
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+  
+  CREATE TABLE "user"
+(
+  id integer NOT NULL DEFAULT nextval('"USER_id_seq"'::regclass),
+  account uuid NOT NULL,
+  firstname text NOT NULL,
+  language text NOT NULL,
+  lastname text NOT NULL,
+  openid text NOT NULL,
+  uuid uuid,
+  CONSTRAINT "USER_pkey" PRIMARY KEY (id),
+  CONSTRAINT account_fk FOREIGN KEY (account)
+      REFERENCES account (uuid) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)

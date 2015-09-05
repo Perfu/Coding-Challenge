@@ -3,16 +3,23 @@
 <title>AppDirect Coding Challenge</title>
 </head>
 <body>
-	<br>
-	<div style="text-align: center">
+	<div>
 		<h2>Welcome to the AppDirect Coding Challenge WebApp</h2>
 		<h3>
 			<a href="consult/users">List of users</a>
 		</h3>
 		
 		<h3>
-			<a href="notification/order?url=https%3A%2F%2Fwww.acme-marketplace.com%2Fapi%2Fintegration%2Fv1%2Fevents%2F12345">Notification Order</a>
+			Test
 		</h3>
+		
+		<ul>
+		<li><a href="test/order">Order</a></li>
+		<li><a href="test/change">Change</a></li>
+		<li><a href="test/cancel">Cancel</a></li>
+		</ul>
+		
+		
 	</div>
 </body>
 </html>

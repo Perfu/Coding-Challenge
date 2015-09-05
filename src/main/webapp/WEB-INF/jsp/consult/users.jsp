@@ -7,36 +7,36 @@
 <body>
 
 	<div>
-	<table border="1">
-			<tr>
-				<th>uuid</th>
-				<th>Name</th>
-			</tr>
-			<c:forEach items="${accounts}" var="account">
-				<tr>
-					<td>${account.uuid}</td>
-					<td>${account.name}</td>
-				</tr>
-			</c:forEach>
-		</table>
-	
-	
-		<table border="1">
-			<tr>
-				<th>Account</th>
-				<th>First Name</th>
-				<th>Last Name</th>
-				<th>Email</th>
-			</tr>
-			<c:forEach items="${users}" var="user">
-				<tr>
-					<td>${user.account}</td>
-					<td>${user.firstName}</td>
-					<td>${user.lastName}</td>
-					<td>${user.email}</td>
-				</tr>
-			</c:forEach>
-		</table>
+		<h2>Users of the application</h2>
+
+		<c:choose>
+			<c:when test="${not empty accounts}">
+				<ul>
+					<c:forEach items="${accounts}" var="account">
+						<li><b>Company : </b>${account.name}, <b>Edition : </b>${account.edition}
+
+							<table border="1">
+								<tr>
+									<th>First Name</th>
+									<th>Last Name</th>
+									<th>Email</th>
+								</tr>
+								<c:forEach items="${account.users}" var="user">
+									<tr>
+										<td>${user.firstName}</td>
+										<td>${user.lastName}</td>
+										<td>${user.email}</td>
+									</tr>
+								</c:forEach>
+							</table></li>
+					</c:forEach>
+				</ul>
+			</c:when>
+			<c:otherwise>
+				No user in the application.
+			</c:otherwise>
+		</c:choose>
+
 	</div>
 </body>
 </html>

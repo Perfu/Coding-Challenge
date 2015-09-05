@@ -5,7 +5,6 @@
 		<baseUrl>https://acme.appdirect.com</baseUrl>
 		<partner>ACME</partner>
 	</marketplace>
-	<flag>STATELESS</flag>
 	<creator>
 		<email>test-email+creator@appdirect.com</email>
 		<firstName>DummyCreatorFirst</firstName>
@@ -16,7 +15,7 @@
 	</creator>
 	<payload>
 		<account>
-			<accountIdentifier>dummy-account</accountIdentifier>
+			<accountIdentifier>d15bb36e-5fb5-11e0-8c3c-00262d2cda03</accountIdentifier>
 			<status>ACTIVE</status>
 		</account>
 		<configuration />

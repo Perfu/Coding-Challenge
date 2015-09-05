@@ -5,17 +5,21 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "user")
+@Table(name = "appuser")
 public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private long id;
-	private String account;
+	@ManyToOne
+	@JoinColumn(name = "account")
+	private Account account;
 	private String email;
 	private String firstName;
 	private String language;
@@ -27,7 +31,7 @@ public class User {
 
 	}
 
-	public User(String account, String email, String firstName, String language, String lastName, String openId,
+	public User(Account account, String email, String firstName, String language, String lastName, String openId,
 			String uuid) {
 		this.account = account;
 		this.email = email;
@@ -46,11 +50,11 @@ public class User {
 		this.id = id;
 	}
 
-	public String getAccount() {
+	public Account getAccount() {
 		return account;
 	}
 
-	public void setAccount(String account) {
+	public void setAccount(Account account) {
 		this.account = account;
 	}
 

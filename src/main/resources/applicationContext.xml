@@ -14,19 +14,33 @@
         http://www.springframework.org/schema/context/spring-context.xsd"
     	>
 
-	<jdbc:embedded-database id="dataSource" type="H2">
+<!--  
+	<jdbc:embedded-database id="dataSource"  type="H2" >
 		<jdbc:script location="classpath:create_db.sql" />
 	</jdbc:embedded-database>
-
+ -->
 	<jpa:repositories base-package="com.coding.challenge.appdirect.repositories" />
+
  
+ <bean class="java.net.URI" id="dbUrl">
+    <constructor-arg value="#{systemEnvironment['DATABASE_URL']}"/>
+</bean>
+
+ <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="org.postgresql.Driver"/>
+    <property name="url" value="#{ 'jdbc:postgresql://' + @dbUrl.getHost() + ':' + @dbUrl.getPort() + @dbUrl.getPath() + '?' + @dbUrl.getQuery() }"/>
+    <property name="username" value="#{ @dbUrl.getUserInfo().split(':')[0] }"/>
+    <property name="password" value="#{ @dbUrl.getUserInfo().split(':')[1] }"/>
+</bean>
  
  <bean id="entityManagerFactory" 
         class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
     <property name="dataSource" ref="dataSource" />
     <property name="packagesToScan" value="com.coding.challenge.appdirect.bean" />
     <property name="jpaVendorAdapter">
-      <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+      <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+      		<property name="databasePlatform" value="org.hibernate.dialect.PostgreSQL9Dialect"/>
+      </bean>
     </property>
   </bean>
   <bean id="transactionManager" 

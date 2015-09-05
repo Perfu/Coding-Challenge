@@ -14,15 +14,23 @@
 </context-param>
   
     <servlet>
-        <servlet-name>consult</servlet-name>
+        <servlet-name>application</servlet-name>
         <servlet-class>
             org.springframework.web.servlet.DispatcherServlet
         </servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>consult</servlet-name>
+        <servlet-name>application</servlet-name>
         <url-pattern>/consult/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>application</servlet-name>
+        <url-pattern>/test/*</url-pattern>
+    </servlet-mapping>
+        <servlet-mapping>
+        <servlet-name>application</servlet-name>
+        <url-pattern>/sso/*</url-pattern>
     </servlet-mapping>
     
     <servlet>
