@@ -21,6 +21,8 @@ import com.coding.challenge.appdirect.bean.Account;
 import com.coding.challenge.appdirect.bean.appdirect.event.Company;
 import com.coding.challenge.appdirect.bean.appdirect.event.Event;
 import com.coding.challenge.appdirect.bean.appdirect.event.Item;
+import com.coding.challenge.appdirect.bean.appdirect.event.Notice;
+import com.coding.challenge.appdirect.bean.appdirect.event.NoticeType;
 import com.coding.challenge.appdirect.bean.appdirect.event.Order;
 import com.coding.challenge.appdirect.bean.appdirect.event.User;
 import com.coding.challenge.appdirect.bean.appdirect.result.ErrorCode;
@@ -41,6 +43,14 @@ public class NotificationController {
 	UserRepository userRepository;
 	@Autowired
 	AccountRepository accountRepository;
+
+	protected void setUserRepository(UserRepository userRepository) {
+		this.userRepository = userRepository;
+	}
+
+	protected void setAccountRepository(AccountRepository accountRepository) {
+		this.accountRepository = accountRepository;
+	}
 
 	@RequestMapping("/event")
 	public @ResponseBody Result event(@RequestParam("url") String urlParam, HttpServletRequest request,
@@ -63,38 +73,7 @@ public class NotificationController {
 			Unmarshaller unmarshaller = context.createUnmarshaller();
 			Event event = (Event) unmarshaller.unmarshal(is);
 
-			if ("STATELESS".equalsIgnoreCase(event.getFlag())) {
-				LOG.info("This is a dummy request.");
-				result.setSuccess(true);
-				return result;
-			}
-
-			switch (event.getType()) {
-			case SUBSCRIPTION_ORDER:
-				LOG.info("SUBSCRIPTION_ORDER : processing...");
-				result = processOrderEvent(event);
-				break;
-			case SUBSCRIPTION_CANCEL:
-
-				result = processCancelEvent(event);
-				break;
-			case SUBSCRIPTION_CHANGE:
-
-				result = processChangeEvent(event);
-				break;
-			case SUBSCRIPTION_NOTICE:
-
-				result.setSuccess(true);
-				break;
-			case USER_ASSIGNMENT:
-
-				break;
-
-			case USER_UNASSIGNMENT:
-
-				break;
-
-			}
+			result = processEvent(event);
 
 		} catch (Exception e) {
 			LOG.error("Problem during the process of the event : ", e);
@@ -102,9 +81,156 @@ public class NotificationController {
 			result.setErrorCode(ErrorCode.UNKNOWN_ERROR);
 		}
 
-		// Get the Event
-		// Create Account
-		// Return Result
+		return result;
+	}
+
+	protected Result processEvent(Event event) {
+		Result result = new Result();
+
+		if ("STATELESS".equalsIgnoreCase(event.getFlag())) {
+			LOG.info("This is a dummy request.");
+			result.setSuccess(true);
+			return result;
+		}
+
+		switch (event.getType()) {
+		case SUBSCRIPTION_ORDER:
+			LOG.info("SUBSCRIPTION_ORDER : processing...");
+			result = processOrderEvent(event);
+			break;
+
+		case SUBSCRIPTION_CANCEL:
+
+			result = processCancelEvent(event);
+			break;
+
+		case SUBSCRIPTION_CHANGE:
+
+			result = processChangeEvent(event);
+			break;
+
+		case SUBSCRIPTION_NOTICE:
+
+			result = processNoticeEvent(event);
+			break;
+
+		case USER_ASSIGNMENT:
+
+			result = processAssignEvent(event);
+			break;
+
+		case USER_UNASSIGNMENT:
+
+			result = processUnassignEvent(event);
+			break;
+
+		}
+		return result;
+	}
+
+	private Result processAssignEvent(Event event) {
+		Result result = new Result();
+
+		com.coding.challenge.appdirect.bean.appdirect.event.Account accountEvent = event.getPayload().getAccount();
+
+		Account account = accountRepository.findOne(accountEvent.getAccountIdentifier());
+
+		if (account == null) {
+			LOG.warn("Account Not Found");
+			result.setSuccess(false);
+			result.setErrorCode(ErrorCode.ACCOUNT_NOT_FOUND);
+
+			return result;
+		}
+
+		User user = event.getPayload().getUser();
+
+		com.coding.challenge.appdirect.bean.User userdb = userRepository.findByOpenID(user.getOpenId());
+
+		if (userdb != null) {
+			LOG.warn("User Already Exists");
+			result.setSuccess(false);
+			result.setErrorCode(ErrorCode.USER_ALREADY_EXISTS);
+
+			return result;
+		}
+		userdb = loadUser(account, user);
+
+		userRepository.save(userdb);
+
+		result.setSuccess(true);
+
+		return result;
+	}
+
+	private Result processUnassignEvent(Event event) {
+		Result result = new Result();
+
+		com.coding.challenge.appdirect.bean.appdirect.event.Account accountEvent = event.getPayload().getAccount();
+
+		Account account = accountRepository.findOne(accountEvent.getAccountIdentifier());
+
+		if (account == null) {
+			LOG.warn("Account Not Found");
+			result.setSuccess(false);
+			result.setErrorCode(ErrorCode.ACCOUNT_NOT_FOUND);
+
+			return result;
+		}
+
+		User user = event.getPayload().getUser();
+
+		com.coding.challenge.appdirect.bean.User userdb = userRepository.findByOpenID(user.getOpenId());
+
+		if (userdb == null) {
+			LOG.warn("User Not Found");
+			result.setSuccess(false);
+			result.setErrorCode(ErrorCode.USER_NOT_FOUND);
+
+			return result;
+		}
+
+		userRepository.delete(userdb);
+
+		result.setSuccess(true);
+
+		return result;
+	}
+
+	private Result processNoticeEvent(Event event) {
+		Result result = new Result();
+
+		com.coding.challenge.appdirect.bean.appdirect.event.Account accountEvent = event.getPayload().getAccount();
+
+		Account account = accountRepository.findOne(accountEvent.getAccountIdentifier());
+
+		if (account == null) {
+			LOG.warn("Account Not Found");
+			result.setSuccess(false);
+			result.setErrorCode(ErrorCode.ACCOUNT_NOT_FOUND);
+
+			return result;
+		}
+
+		Notice notice = event.getPayload().getNotice();
+
+		switch (notice.getType()) {
+		case CLOSED:
+			accountRepository.delete(account);
+
+			break;
+		case DEACTIVATED:
+			account.setStatus(NoticeType.DEACTIVATED.name());
+			accountRepository.save(account);
+			break;
+		case REACTIVATED:
+			account.setStatus(NoticeType.REACTIVATED.name());
+			accountRepository.save(account);
+			break;
+		case UPCOMING_INVOICE:
+			break;
+		}
+		result.setSuccess(true);
 		return result;
 	}
 
@@ -122,10 +248,10 @@ public class NotificationController {
 
 			return result;
 		}
-		
+
 		Order order = event.getPayload().getOrder();
 		account.setEdition(order.getEditionCode());
-		
+
 		if (order.getItem() != null) {
 			for (Item item : order.getItem()) {
 

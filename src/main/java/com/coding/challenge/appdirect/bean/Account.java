@@ -21,6 +21,7 @@ public class Account {
 	private String phoneNumber;
 	private String edition;
 	private String website;
+	private String status;
 	private long maxUsers;
 	
 	@OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.REMOVE, mappedBy="account")
@@ -102,9 +103,12 @@ public class Account {
 		this.users = users;
 	}
 
-	@Override
-	public String toString() {
-		return String.format("id : %s , name : %s", uuid, name);
+	public String getStatus() {
+		return status;
 	}
 
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
 }

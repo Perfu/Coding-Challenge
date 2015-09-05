@@ -5,7 +5,6 @@
 		<baseUrl>https://acme.appdirect.com</baseUrl>
 		<partner>ACME</partner>
 	</marketplace>
-	<flag>STATELESS</flag>
 	<creator>
 		<email>test-email+creator@appdirect.com</email>
 		<firstName>DummyCreatorFirst</firstName>

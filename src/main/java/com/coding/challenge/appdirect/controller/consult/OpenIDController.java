@@ -38,6 +38,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.coding.challenge.appdirect.bean.User;
+import com.coding.challenge.appdirect.bean.appdirect.event.NoticeType;
 import com.coding.challenge.appdirect.repositories.UserRepository;
 import com.coding.challenge.appdirect.util.URLUtils;
 
@@ -100,6 +101,12 @@ public class OpenIDController {
 			User user = userRepository.findByOpenID( identifier.getIdentifier());
 			
 			req.setAttribute("user", user);
+			
+			
+			if(user.getAccount().getStatus() != null && NoticeType.valueOf(user.getAccount().getStatus()) == NoticeType.DEACTIVATED) {
+				
+				return "unauthorize";
+			}
 			
 			return "return";
 		}

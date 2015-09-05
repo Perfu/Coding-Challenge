@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<event>
+    <type>SUBSCRIPTION_NOTICE</type>
+    <marketplace>
+        <partner>ACME</partner>
+        <baseUrl>https://www.acme-marketplace.com</baseUrl>
+    </marketplace>
+    <payload>
+        <account>
+            <accountIdentifier>d15bb36e-5fb5-11e0-8c3c-00262d2cda03</accountIdentifier>
+            <status>FREE_TRIAL_EXPIRED</status>
+        </account>
+        <notice>
+            <type>DEACTIVATED</type>
+        </notice>
+    </payload>
+</event>

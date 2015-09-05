@@ -1,0 +1,131 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 9.4.1
+-- Dumped by pg_dump version 9.4.0
+-- Started on 2015-09-05 17:31:51
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- TOC entry 175 (class 3079 OID 11861)
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 2016 (class 0 OID 0)
+-- Dependencies: 175
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 174 (class 1259 OID 37146511)
+-- Name: appuser; Type: TABLE; Schema: public; Owner: swgrveurmpzgbp; Tablespace: 
+--
+
+CREATE TABLE appuser (
+    id integer NOT NULL,
+    firstname text NOT NULL,
+    language text NOT NULL,
+    lastname text NOT NULL,
+    openid text NOT NULL,
+    email text,
+    uuid text,
+    account text
+);
+
+--
+-- TOC entry 173 (class 1259 OID 37146509)
+-- Name: USER_id_seq; Type: SEQUENCE; Schema: public; Owner: swgrveurmpzgbp
+--
+
+CREATE SEQUENCE "USER_id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+--
+-- TOC entry 2017 (class 0 OID 0)
+-- Dependencies: 173
+-- Name: USER_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: swgrveurmpzgbp
+--
+
+ALTER SEQUENCE "USER_id_seq" OWNED BY appuser.id;
+
+
+--
+-- TOC entry 172 (class 1259 OID 37145949)
+-- Name: account; Type: TABLE; Schema: public; Owner: swgrveurmpzgbp; Tablespace: 
+--
+
+CREATE TABLE account (
+    country text,
+    email text,
+    name text,
+    phonenumber text,
+    edition text NOT NULL,
+    maxusers integer NOT NULL,
+    website text,
+    uuid text NOT NULL,
+    status text
+);
+
+--
+-- TOC entry 1891 (class 2604 OID 37146514)
+-- Name: id; Type: DEFAULT; Schema: public; Owner: swgrveurmpzgbp
+--
+
+ALTER TABLE ONLY appuser ALTER COLUMN id SET DEFAULT nextval('"USER_id_seq"'::regclass);
+
+--
+-- TOC entry 1895 (class 2606 OID 37146519)
+-- Name: USER_pkey; Type: CONSTRAINT; Schema: public; Owner: swgrveurmpzgbp; Tablespace: 
+--
+
+ALTER TABLE ONLY appuser
+    ADD CONSTRAINT "USER_pkey" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 1893 (class 2606 OID 37165371)
+-- Name: account_pk; Type: CONSTRAINT; Schema: public; Owner: swgrveurmpzgbp; Tablespace: 
+--
+
+ALTER TABLE ONLY account
+    ADD CONSTRAINT account_pk PRIMARY KEY (uuid);
+
+
+--
+-- TOC entry 1896 (class 2606 OID 37165795)
+-- Name: account_fk; Type: FK CONSTRAINT; Schema: public; Owner: swgrveurmpzgbp
+--
+
+ALTER TABLE ONLY appuser
+    ADD CONSTRAINT account_fk FOREIGN KEY (account) REFERENCES account(uuid);
+
+-- Completed on 2015-09-05 17:31:55
+
+--
+-- PostgreSQL database dump complete
+--
+

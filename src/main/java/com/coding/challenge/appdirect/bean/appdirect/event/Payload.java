@@ -5,6 +5,8 @@ public class Payload {
 	private Company company;
 	private Order order;
 	private Account account;
+	private Notice notice;
+	private User user;
 
 	public Company getCompany() {
 		return company;
@@ -30,4 +32,19 @@ public class Payload {
 		this.account = account;
 	}
 
+	public Notice getNotice() {
+		return notice;
+	}
+
+	public void setNotice(Notice notice) {
+		this.notice = notice;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 }
