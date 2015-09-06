@@ -22,7 +22,7 @@ import oauth.signpost.OAuthConsumer;
 import oauth.signpost.basic.DefaultOAuthConsumer;
 
 /**
- * 
+ * Controller to send dummyApdirect event to the app.
  * @author A. Zieba
  *
  */

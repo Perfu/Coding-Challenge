@@ -18,14 +18,10 @@
 							<table border="1">
 								<tr>
 									<th>First Name</th>
-									<th>Last Name</th>
-									<th>Email</th>
 								</tr>
 								<c:forEach items="${account.users}" var="user">
 									<tr>
 										<td>${user.firstName}</td>
-										<td>${user.lastName}</td>
-										<td>${user.email}</td>
 									</tr>
 								</c:forEach>
 							</table></li>

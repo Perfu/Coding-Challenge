@@ -25,18 +25,21 @@ import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.http.HttpParameters;
 
+/**
+ * Filter for Oauth 2 legged to validate the request receive by appdirect.
+ * @author A. Zieba
+ *
+ */
 public class OauthFilter implements Filter {
 
 	private static final Logger LOG = Logger.getLogger(OauthFilter.class);
 
 	@Override
 	public void destroy() {
-		// ...
 	}
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		//
 	}
 
 	@Override

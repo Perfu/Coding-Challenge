@@ -42,6 +42,14 @@ import com.coding.challenge.appdirect.bean.appdirect.event.NoticeType;
 import com.coding.challenge.appdirect.repositories.UserRepository;
 import com.coding.challenge.appdirect.util.URLUtils;
 
+/**
+ * Controller for OpenID, only the ressource /sso/login is concern by openId
+ * 
+ * This class is based on the example available in openid4java.
+ * 
+ * @author A. Zieba
+ *
+ */
 @Controller
 public class OpenIDController {
 

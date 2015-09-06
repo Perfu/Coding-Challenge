@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.coding.challenge.appdirect.repositories.AccountRepository;
  
 /**
- * 
+ * Controller to consult the list of users of the app.
  * @author A. Zieba
  *
  */
