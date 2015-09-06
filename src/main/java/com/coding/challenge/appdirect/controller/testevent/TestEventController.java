@@ -48,6 +48,24 @@ public class TestEventController {
 		LOG.info("Sending cancel event...");
 		return callEvent(request, "dummyCancel.xml");
 	}
+	
+	@RequestMapping("/notice")
+	public @ResponseBody String notice(HttpServletRequest request) {
+		LOG.info("Sending cancel event...");
+		return callEvent(request, "dummyCancel.xml");
+	}
+	
+	@RequestMapping("/assign")
+	public @ResponseBody String assign(HttpServletRequest request) {
+		LOG.info("Sending cancel event...");
+		return callEvent(request, "dummyAssign.xml");
+	}
+	
+	@RequestMapping("/unassign")
+	public @ResponseBody String unassign(HttpServletRequest request) {
+		LOG.info("Sending cancel event...");
+		return callEvent(request, "dummyUnassign.xml");
+	}
 
 	private String callEvent(HttpServletRequest request, String event) {
 		try {

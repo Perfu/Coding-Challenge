@@ -70,4 +70,22 @@ public class URLUtilsTest {
 		
 		Assert.assertEquals(url, URLUtils.getFullURL(request));
 	}
+	
+	
+	@Test
+	public void getBaseURL() {
+		
+		String url = "https://appdirect-challenge.herokuapp.com/challenge";
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setQueryString("url=https%3A%2F%2Fwww.appdirect.com%2Fapi%2Fintegration%2Fv1%2Fevents%2Ff7fc61ee-a4fd-4fba-9901-fdccc37ca098");
+		request.setScheme("http");
+		request.setServerName("appdirect-challenge.herokuapp.com");
+		request.setServerPort(8080);
+		request.setContextPath("/challenge");
+		request.setServletPath("/notification/event");
+		request.addHeader(URLUtils.HEADER_PROTO, "https");
+		request.addHeader(URLUtils.HEADER_PORT, "443");
+		
+		Assert.assertEquals(url, URLUtils.getBaseURL(request));
+	}
 }

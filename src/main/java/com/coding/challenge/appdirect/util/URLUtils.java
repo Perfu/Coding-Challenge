@@ -37,7 +37,6 @@ public class URLUtils {
 		int port = request.getServerPort();
 		String scheme = request.getScheme();
 		String contextPath = request.getContextPath();
-		String servletPath = request.getServletPath();
 
 		// In case of proxy in front our app
 		if (StringUtils.isNotBlank(request.getHeader(HEADER_PROTO))) {
@@ -56,8 +55,8 @@ public class URLUtils {
 			urlBuffer.append(':').append(port);
 		}
 
-		urlBuffer.append(contextPath).append(servletPath);
-
+		urlBuffer.append(contextPath);
+		
 		return urlBuffer.toString();
 
 	}
@@ -77,6 +76,9 @@ public class URLUtils {
 
 		String pathInfo = request.getPathInfo();
 		String queryString = request.getQueryString();
+		String servletPath = request.getServletPath();
+
+		urlBuffer.append(servletPath);
 
 		if (pathInfo != null) {
 			urlBuffer.append(pathInfo);

@@ -214,21 +214,23 @@ public class NotificationController {
 
 		Notice notice = event.getPayload().getNotice();
 
-		switch (notice.getType()) {
-		case CLOSED:
-			accountRepository.delete(account);
+		if (notice != null) {
+			switch (notice.getType()) {
+			case CLOSED:
+				accountRepository.delete(account);
 
-			break;
-		case DEACTIVATED:
-			account.setStatus(NoticeType.DEACTIVATED.name());
-			accountRepository.save(account);
-			break;
-		case REACTIVATED:
-			account.setStatus(NoticeType.REACTIVATED.name());
-			accountRepository.save(account);
-			break;
-		case UPCOMING_INVOICE:
-			break;
+				break;
+			case DEACTIVATED:
+				account.setStatus(NoticeType.DEACTIVATED.name());
+				accountRepository.save(account);
+				break;
+			case REACTIVATED:
+				account.setStatus(NoticeType.REACTIVATED.name());
+				accountRepository.save(account);
+				break;
+			case UPCOMING_INVOICE:
+				break;
+			}
 		}
 		result.setSuccess(true);
 		return result;

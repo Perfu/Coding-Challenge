@@ -11,7 +11,7 @@
             <status>FREE_TRIAL_EXPIRED</status>
         </account>
         <notice>
-            <type>DEACTIVATED</type>
+            <type>CLOSED</type>
         </notice>
     </payload>
 </event>

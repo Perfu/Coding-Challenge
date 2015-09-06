@@ -17,6 +17,9 @@
 		<li><a href="test/order">Order</a></li>
 		<li><a href="test/change">Change</a></li>
 		<li><a href="test/cancel">Cancel</a></li>
+		<li><a href="test/notice">Notice</a></li>
+		<li><a href="test/assign">Assign</a></li>
+		<li><a href="test/unassign">Unassign</a></li>
 		</ul>
 		
 		

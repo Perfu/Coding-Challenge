@@ -51,6 +51,7 @@ import com.coding.challenge.appdirect.util.URLUtils;
  *
  */
 @Controller
+@SuppressWarnings("rawtypes")
 public class OpenIDController {
 
 	private static final String OPTIONAL_VALUE = "0";
@@ -127,7 +128,7 @@ public class OpenIDController {
 		// configure the return_to URL where your application will receive
 		// the authentication responses from the OpenID provider
 		// String returnToUrl = "http://example.com/openid";
-		String returnToUrl = URLUtils.getBaseURL(httpReq) + "/login?is_return=true";
+		String returnToUrl = URLUtils.getBaseURL(httpReq) + "/sso/login?is_return=true";
 
 		LOG.info("Return URL : " + returnToUrl);
 		// perform discovery on the user-supplied identifier
@@ -200,6 +201,7 @@ public class OpenIDController {
 	 *      "http://openid.net/specs/openid-attribute-exchange-1_0.html">OpenID
 	 *      Attribute Exchange 1.0 - Final</a>
 	 */
+	@SuppressWarnings("unused")
 	private void addAttributeExchangeToAuthRequest(HttpServletRequest httpReq, AuthRequest authReq)
 			throws MessageException {
 		String[] aliases = httpReq.getParameterValues("alias");
@@ -277,6 +279,7 @@ public class OpenIDController {
 	 * @param authSuccess
 	 * @throws MessageException
 	 */
+	@SuppressWarnings("unchecked")
 	private void receiveAttributeExchange(HttpServletRequest httpReq, AuthSuccess authSuccess) throws MessageException {
 		if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
 			FetchResponse fetchResp = (FetchResponse) authSuccess.getExtension(AxMessage.OPENID_NS_AX);
