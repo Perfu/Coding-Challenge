@@ -10,7 +10,9 @@ This application is use to demonstrate the integration of some AppDirect's APIs 
 
 By default, It use a PostGreSql database. In SQL folder, there is a SQL script to create the needed tables.
 
-Ui is only raw HTML. there is no css.
+UI is only raw HTML. there is no css.
+
+In the application, there are local tests to simulate appdirect work flow. it is not link with appdirect but permit to test the support of the different events.
 
 To install the application, follow these steps :
 
